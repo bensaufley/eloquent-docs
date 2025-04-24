@@ -26,7 +26,7 @@ class ScopesGenerator implements PhpDocGeneratorContract
           return "";
         }
 
-        return "\n * === Scopes ===\n$phpDoc";
+        return " * === Scopes ===\n$phpDoc";
     }
 
     private function isLocalScope(ReflectionMethod $method): bool

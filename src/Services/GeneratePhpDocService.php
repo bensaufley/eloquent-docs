@@ -50,22 +50,16 @@ class GeneratePhpDocService
      */
     public function generate(): string
     {
-        $phpDocStr = '/**';
-
-        foreach (static::GENERATORS as $generatorClass) {
+        $phpDocStr = "/**\n "
+          . join("\n *\n ", array_filter(array_map(function (string $generatorClass): string {
             /**
              * @var PhpDocGeneratorContract $generator
              */
             $generator = $this->laravel->make($generatorClass);
 
-            $doc = $generator->generate($this->model, $this->options);
-            if ($doc) {
-              $phpDocStr .= "$doc\n *\n";
-            }
-        }
-
-        $phpDocStr .= "\n */";
-
+            return trim($generator->generate($this->model, $this->options));
+          }, static::GENERATORS), fn ($item) => !empty($item)))
+          . "\n */";
         return $phpDocStr;
     }
 }
