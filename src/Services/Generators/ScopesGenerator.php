@@ -2,9 +2,11 @@
 
 namespace SethPhat\EloquentDocs\Services\Generators;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionNamedType;
 
 class ScopesGenerator implements PhpDocGeneratorContract
 {
@@ -18,7 +20,31 @@ class ScopesGenerator implements PhpDocGeneratorContract
             if ($this->isLocalScope($method)) {
                 // Remove 'scope' from method name and convert to camelCase
                 $scopeName = lcfirst(substr($method->getName(), 5));
-                $phpDoc .= " * @method static \\Illuminate\\Database\\Eloquent\\Builder<{$className}> {$scopeName}()\n";
+                $args="";
+                $i = -1;
+                $args = join(", ", array_filter(array_map(function ($param) use (&$i) {
+                    $type = $param->getType();
+                    $typeDoc = "";
+                    $i += 1;
+                    print("$i: $param\n  $type\n");
+                    if ($type) {
+                        if ($type instanceof ReflectionNamedType && $type->getName() === Builder::class) {
+                            return null;
+                        }
+                        $typeDoc = "$type ";
+                    } else if ($i === 0) {
+                        // First argument is the query builder
+                        return null;
+                    }
+                    if ($param->isPassedByReference()) {
+                        $typeDoc .= "&";
+                    }
+                    if ($param->isVariadic()) {
+                        $typeDoc .= "...";
+                    }
+                    return $typeDoc . '$' . $param->getName();
+                }, $method->getParameters()), fn ($item) => !empty($item)));
+                $phpDoc .= " * @method static \\Illuminate\\Database\\Eloquent\\Builder<{$className}> {$scopeName}($args)\n";
             }
         }
 
