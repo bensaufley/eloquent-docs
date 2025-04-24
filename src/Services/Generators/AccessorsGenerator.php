@@ -20,7 +20,7 @@ class AccessorsGenerator implements PhpDocGeneratorContract
 
     public function generate(Model $model, array $options = []): string
     {
-        $phpDocStr = "\n*\n* === Accessors/Attributes ===";
+        $phpDocStr = "\n * === Accessors/Attributes ===";
 
         $virtualAttributes = $this->getVirtualAttributes($model);
         if ($virtualAttributes->isEmpty()) {

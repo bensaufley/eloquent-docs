@@ -9,6 +9,7 @@ use SethPhat\EloquentDocs\Services\Generators\ColumnsGenerator;
 use SethPhat\EloquentDocs\Services\Generators\PhpDocGeneratorContract;
 use SethPhat\EloquentDocs\Services\Generators\RelationshipsGenerator;
 use SethPhat\EloquentDocs\Services\Generators\TableGenerator;
+use SethPhat\EloquentDocs\Services\Generators\ScopesGenerator;
 
 class GeneratePhpDocService
 {
@@ -17,6 +18,7 @@ class GeneratePhpDocService
         ColumnsGenerator::class,
         RelationshipsGenerator::class,
         AccessorsGenerator::class,
+        ScopesGenerator::class,
     ];
 
     protected Model $model;
@@ -56,10 +58,13 @@ class GeneratePhpDocService
              */
             $generator = $this->laravel->make($generatorClass);
 
-            $phpDocStr .= $generator->generate($this->model, $this->options);
+            $doc = $generator->generate($this->model, $this->options);
+            if ($doc) {
+              $phpDocStr .= "$doc\n *\n";
+            }
         }
 
-        $phpDocStr .= "\n*/";
+        $phpDocStr .= "\n */";
 
         return $phpDocStr;
     }

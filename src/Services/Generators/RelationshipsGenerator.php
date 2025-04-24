@@ -26,7 +26,7 @@ class RelationshipsGenerator implements PhpDocGeneratorContract
 
     public function generate(Model $model, array $options = []): string
     {
-        $phpDocStr = "\n*\n* === Relationships ===";
+        $phpDocStr = "\n * === Relationships ===";
         $relationships = $this->getRelations($model);
         $isUseShortClass = $options['useShortClass'] ?? false;
 

@@ -27,7 +27,7 @@ class ColumnsGenerator implements PhpDocGeneratorContract
         }
 
         // columns
-        $phpDocStr = "\n*\n* === Columns ===";
+        $phpDocStr = "\n * === Columns ===";
         foreach ($columns as $column) {
             $phpDocStr .= sprintf(
                 '%s * @property %s %s',
